@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { TareasContext } from '../context/TareasContext';
 
-function Tarea({ item, completarTarea }) {
+function Tarea({ item, navigation }) {
+  const tareasContext = useContext(TareasContext);
+
   if (item.completada) {
     return (
       <View style={styles.itemContenedor}>
-        <Text style={styles.itemCompleto}>{item.titulo}</Text>
-        <TouchableOpacity onPress={() => completarTarea(item.id, false)}>
+        <View style={styles.itemCompleto}>
+          <TouchableOpacity
+            onPress={() => {
+              tareasContext.setTareaActual(item);
+              navigation.navigate('Editar Tarea');
+            }}
+          >
+            <Text>{item.titulo}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={() => tareasContext.completarTarea(item.id, false)}
+        >
           <MaterialCommunityIcons
             name="checkbox-marked-outline"
             size={24}
@@ -15,18 +29,31 @@ function Tarea({ item, completarTarea }) {
             style={styles.checkbox}
           />
         </TouchableOpacity>
-        <MaterialCommunityIcons
-          name="trash-can-outline"
-          size={24}
-          color="black"
-        />
+        <TouchableOpacity onPress={() => tareasContext.borrarTarea(item.id)}>
+          <MaterialCommunityIcons
+            name="trash-can-outline"
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
       </View>
     );
   } else {
     return (
       <View style={styles.itemContenedor}>
-        <Text style={styles.itemIncompleto}>{item.titulo}</Text>
-        <TouchableOpacity onPress={() => completarTarea(item.id, true)}>
+        <View style={styles.itemIncompleto}>
+          <TouchableOpacity
+            onPress={() => {
+              tareasContext.setTareaActual({ ...item });
+              navigation.navigate('Editar Tarea');
+            }}
+          >
+            <Text>{item.titulo}</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          onPress={() => tareasContext.completarTarea(item.id, true)}
+        >
           <MaterialCommunityIcons
             name="checkbox-blank-outline"
             size={24}
@@ -34,11 +61,13 @@ function Tarea({ item, completarTarea }) {
             style={styles.checkbox}
           />
         </TouchableOpacity>
-        <MaterialCommunityIcons
-          name="trash-can-outline"
-          size={24}
-          color="black"
-        />
+        <TouchableOpacity onPress={() => tareasContext.borrarTarea(item.id)}>
+          <MaterialCommunityIcons
+            name="trash-can-outline"
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
       </View>
     );
   }

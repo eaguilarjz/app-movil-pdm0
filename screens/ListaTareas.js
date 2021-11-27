@@ -1,60 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
-import { apiUrl } from '../config';
+import React, { useContext } from 'react';
+import { View, StyleSheet, FlatList, Button } from 'react-native';
 import Tarea from '../components/Tarea';
-
+import { TareasContext } from '../context/TareasContext';
 function ListaTareas({ navigation }) {
-  const [tareas, setTareas] = useState([{ id: 1, titulo: 'Titulo' }]);
-
-  const obtenerTareas = useCallback(async () => {
-    try {
-      const url = apiUrl + '/tareas';
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const datos = await response.json();
-      setTareas(datos);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    /* Lógica para llenar la lista de tareas desde la API */
-    obtenerTareas();
-  }, [obtenerTareas]);
-
-  const completarTarea = async (id, completada) => {
-    try {
-      const url = apiUrl + '/tareas/' + id;
-      const response = await fetch(url, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          completada: completada,
-        }),
-      });
-      const datos = await response.json();
-      setTareas([...tareas.map(tarea => (tarea.id === id ? datos : tarea))]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const tareasContext = useContext(TareasContext);
 
   const renderItem = ({ item }) => (
-    <Tarea item={item} completarTarea={completarTarea} />
+    <Tarea item={item} navigation={navigation} />
   );
 
   return (
     <View style={styles.contenedor}>
       <FlatList
-        data={tareas}
+        data={tareasContext.tareas}
         renderItem={renderItem}
         keyExtractor={item => item.id}
       />
       <View style={styles.button}>
-        <Button title="Refrescar" onPress={obtenerTareas} />
         <Button
           title="Nueva tarea"
           onPress={() => navigation.navigate('Nueva Tarea')}

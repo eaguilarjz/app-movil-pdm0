@@ -1,15 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View, Button } from 'react-native';
 import { TareasContext } from '../context/TareasContext';
 
-function NuevaTarea({ navigation }) {
+function EditarTarea({ navigation }) {
   const tareasContext = useContext(TareasContext);
 
-  const [tarea, setTarea] = useState({
-    titulo: '',
-    descripcion: '',
-    completada: false,
-  });
+  const [tarea, setTarea] = useState(tareasContext.tareaActual);
 
   const onChangeTituloText = titulo => {
     setTarea({ ...tarea, titulo: titulo });
@@ -43,7 +39,7 @@ function NuevaTarea({ navigation }) {
         <Button
           title="Guardar"
           onPress={async () => {
-            await tareasContext.guardarTarea(tarea);
+            await tareasContext.modificarTarea(tarea);
             navigation.navigate('Lista de Tareas');
           }}
         />
@@ -82,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NuevaTarea;
+export default EditarTarea;
