@@ -6,17 +6,19 @@ export const AuthContext = createContext();
 async function saveToken(value) {
   try {
     await SecureStore.setItemAsync('token', value);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function getToken() {
   try {
     let result = await SecureStore.getItemAsync('token');
     if (result) {
-      // alert("🔐 Here's your value 🔐 \n" + result);
+      alert("🔐 Here's your value 🔐 \n" + result);
       return result;
     } else {
-      // alert('No values stored under that key.');
+      alert('No values stored under that key.');
       return null;
     }
   } catch (error) {
@@ -26,11 +28,14 @@ async function getToken() {
 
 export const AuthProvider = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [token, setToken] = useState('');
 
   const logout = async () => {
     try {
       await SecureStore.deleteItemAsync('token');
+      alert('Se borró el token.');
       setIsSignedIn(false);
+      setToken('');
     } catch (error) {}
   };
 
@@ -40,6 +45,7 @@ export const AuthProvider = ({ children }) => {
       const token = await getToken();
       if (token) {
         setIsSignedIn(true);
+        setToken(token);
       }
     };
 
@@ -48,7 +54,15 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isSignedIn, setIsSignedIn, saveToken, getToken, logout }}
+      value={{
+        isSignedIn,
+        token,
+        setIsSignedIn,
+        setToken,
+        saveToken,
+        getToken,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

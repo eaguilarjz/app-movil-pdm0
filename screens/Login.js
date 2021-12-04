@@ -1,9 +1,16 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import { apiUrl } from '../config';
 import { AuthContext } from '../context/AuthContext';
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const auth = useContext(AuthContext);
@@ -45,13 +52,18 @@ const Login = () => {
               }),
             });
             const datos = await response.json();
-            await auth.saveToken(datos.token);
+            console.log(datos);
             auth.setIsSignedIn(true);
+            auth.setToken(datos.token);
+            await auth.saveToken(datos.token);
           } catch (error) {
             console.log(error);
           }
         }}
       />
+      <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
+        <Text>Crea una cuenta</Text>
+      </TouchableOpacity>
     </View>
   );
 };
