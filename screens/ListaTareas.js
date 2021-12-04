@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, FlatList, Button } from 'react-native';
 import Tarea from '../components/Tarea';
+import { AuthContext } from '../context/AuthContext';
 import { TareasContext } from '../context/TareasContext';
 function ListaTareas({ navigation }) {
   const tareasContext = useContext(TareasContext);
+  const auth = useContext(AuthContext);
 
   const renderItem = ({ item }) => (
     <Tarea item={item} navigation={navigation} />
@@ -17,6 +19,7 @@ function ListaTareas({ navigation }) {
         keyExtractor={item => item.id}
       />
       <View style={styles.button}>
+        <Button title="Cerrar sesión" onPress={() => auth.logout()} />
         <Button
           title="Nueva tarea"
           onPress={() => navigation.navigate('Nueva Tarea')}
